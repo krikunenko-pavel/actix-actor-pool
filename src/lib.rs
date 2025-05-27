@@ -3,7 +3,7 @@ use std::sync::{
     atomic::{AtomicUsize, Ordering},
 };
 
-use actix::{Actor, Addr, Context, Handler, MailboxError, Message, Supervised};
+use actix::{Addr, Context, Handler, MailboxError, Message, Supervised};
 
 pub struct Pool<A: actix::Actor> {
     pub(crate) workers: Vec<Addr<A>>,
@@ -19,7 +19,7 @@ where
             workers: (0..size)
                 .map(|_| {
                     let init_fn = init_fn.clone();
-                    actix::Supervisor::start(move |ctx| init_fn())
+                    actix::Supervisor::start(move |_| init_fn())
                 })
                 .collect(),
             current: Arc::new(AtomicUsize::new(0)),
@@ -90,13 +90,13 @@ mod tests {
 
     impl actix::Handler<FailMessage> for TestActor {
         type Result = ();
-        fn handle(&mut self, msg: FailMessage, ctx: &mut Self::Context) -> Self::Result {
+        fn handle(&mut self, _msg: FailMessage, ctx: &mut Self::Context) -> Self::Result {
             ctx.stop();
         }
     }
 
     impl Supervised for TestActor {
-        fn restarting(&mut self, ctx: &mut <Self as Actor>::Context) {
+        fn restarting(&mut self, _ctx: &mut <Self as Actor>::Context) {
             println!("Restarting actor: {}", self.name);
         }
     }
@@ -114,7 +114,7 @@ mod tests {
                     println!("{s:?}");
                     assert!(s.is_ok())
                 } else {
-                    let s = pool.send(FailMessage).await;
+                    let _ = pool.send(FailMessage).await;
                 }
             }
 
