@@ -1,6 +1,6 @@
 [package]
 name = "actix-actor-pool"
-version = "0.3.1"
+version = "0.3.2"
 edition = "2024"
 license-file = "./LICENSE"
 description = "Simple implementation of Pool for Actix actors"
