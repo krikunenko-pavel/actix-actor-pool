@@ -1,4 +1,5 @@
-## [0.3.0] - 2025-05-27
+## [0.3.5] - 2025-05-27
 
-### Added
-- add release workflow
+### Updated
+- update Cargo.toml package info
+- add docs
